@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="MakanKuy - Sistem pemesanan makanan berbasis QR Code untuk kafe/restoran di Tarakan.">
+    <title>MakanKuy - Selamat Datang</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Poppins', 'sans-serif'] },
+                    colors: {
+                        primary: '#f97316',
+                        secondary: '#ea580c'
+                    }
+                }
+            }
+        };
+    </script>
+</head>
+<body class="bg-gray-50 text-gray-800 antialiased min-h-screen">
+    <main class="halaman-awal min-h-screen flex items-center justify-center p-4 bg-white/95">
+        <section aria-labelledby="welcome-title" class="kartu-sambutan bg-white p-8 md:p-12 rounded-[2.5rem] shadow-2xl border border-orange-100 max-w-md w-full relative overflow-visible">
+            <!-- Elemen dekoratif, disembunyikan dari screen reader -->
+            <div class="absolute top-0 right-0 -mr-16 -mt-16 w-32 h-32 bg-orange-200 rounded-full blur-3xl opacity-50 pointer-events-none" aria-hidden="true"></div>
+            <div class="absolute bottom-0 left-0 -ml-16 -mb-16 w-32 h-32 bg-yellow-200 rounded-full blur-3xl opacity-50 pointer-events-none" aria-hidden="true"></div>
+
+            <header class="kepala-sambutan relative z-10 text-center">
+                <div class="relative inline-block mb-6">
+                    <button id="cashier-speech" type="button" class="gelembung absolute -top-12 left-1/2 -translate-x-1/2 bg-orange-500 text-white text-xs font-bold py-1.5 px-4 rounded-full shadow-lg whitespace-nowrap cursor-pointer hover:bg-orange-600 transition-colors z-30">
+                        Klik aku untuk sapaan &amp; kejutan!
+                        <span class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2.5 h-2.5 bg-orange-500 rotate-45" aria-hidden="true"></span>
+                    </button>
+
+                    <button id="cashier-button" type="button" class="kasir" aria-label="Klik kasir untuk kejutan">
+                        <!-- Ilustrasi wajah kasir dibangun dari CSS, murni dekoratif -->
+                        <span class="kepala-kasir block" id="cashier-head-el" aria-hidden="true">
+                            <span class="topi-kasir"></span>
+                            <span class="mata-kasir kiri"><span class="pupil-kasir"></span></span>
+                            <span class="mata-kasir kanan"><span class="pupil-kasir"></span></span>
+                            <span class="pipi-kasir kiri"></span>
+                            <span class="pipi-kasir kanan"></span>
+                            <span class="mulut-kasir" id="cashier-mouth-el"></span>
+                        </span>
+                    </button>
+                </div>
+
+                <h1 id="welcome-title" class="text-3xl font-bold text-gray-800 mb-2">
+                    Selamat Datang! <span class="lambaian" aria-hidden="true">👋</span>
+                </h1>
+                <p class="text-gray-500 mb-8">Silakan isi data meja Anda sebelum memesan makanan lezat kami.</p>
+            </header>
+
+            <form id="welcome-form" class="form-pesanan space-y-4" novalidate>
+                <fieldset class="data-pesanan space-y-4 border-0 p-0 m-0">
+                    <legend class="sr-only">Data pemesanan</legend>
+                    <div class="text-left">
+                        <label for="name-input" class="block text-sm font-semibold text-gray-700 mb-1 ml-2">Nama Anda</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none" aria-hidden="true">
+                                <i class="fa-regular fa-user text-gray-400"></i>
+                            </span>
+                            <input type="text" id="name-input" name="nama" placeholder="Ketik nama panggilan..." class="w-full bg-gray-50 border border-gray-200 text-gray-800 rounded-2xl pl-11 pr-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all shadow-sm" required>
+                        </div>
+                    </div>
+
+                    <div class="text-left">
+                        <label for="table-input" class="block text-sm font-semibold text-gray-700 mb-1 ml-2">Nomor Meja</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none" aria-hidden="true">
+                                <i class="fa-solid fa-chair text-gray-400"></i>
+                            </span>
+                            <input type="number" id="table-input" name="meja" placeholder="Cth: 12" class="w-full bg-gray-50 border border-gray-200 text-gray-800 rounded-2xl pl-11 pr-12 py-3.5 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all shadow-sm" required>
+                            <button id="detect-table" type="button" class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-orange-500 transition-colors group" title="Auto-detect dari QR" aria-label="Auto-detect nomor meja">
+                                <i id="detect-icon" class="fa-solid fa-location-crosshairs group-hover:scale-110 transition-transform" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                        <p class="text-[11px] text-gray-400 mt-1 ml-2">
+                            <i class="fa-solid fa-circle-info mr-1" aria-hidden="true"></i>Klik ikon target untuk auto-detect.
+                        </p>
+                    </div>
+                </fieldset>
+
+                <button type="submit" class="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold py-4 px-8 rounded-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+                    Mulai Pesan Sekarang <i class="fa-solid fa-arrow-right ml-2" aria-hidden="true"></i>
+                </button>
+            </form>
+        </section>
+    </main>
+
+    <!-- role="status" + aria-live supaya toast yang muncul otomatis diumumkan ke screen reader -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2" role="status" aria-live="polite" aria-atomic="true"></div>
+
+
+
+    <script>
+        const form = document.getElementById('welcome-form');
+        const nameInput = document.getElementById('name-input');
+        const tableInput = document.getElementById('table-input');
+        const detectButton = document.getElementById('detect-table');
+        const detectIcon = document.getElementById('detect-icon');
+        const cashierHead = document.getElementById('cashier-head-el');
+        const cashierMouth = document.getElementById('cashier-mouth-el');
+        const cashierSpeech = document.getElementById('cashier-speech');
+
+        const showToast = (message) => {
+            const toast = document.createElement('div');
+            toast.className = 'bg-gray-900 text-white px-6 py-3 rounded-xl shadow-xl flex items-center gap-3 notifikasi-masuk';
+            toast.innerHTML = `<i class="fa-solid fa-circle-check text-green-400"></i><span class="text-sm font-medium">${message}</span>`;
+            document.getElementById('toast-container').appendChild(toast);
+            setTimeout(() => {
+                toast.classList.replace('notifikasi-masuk', 'notifikasi-keluar');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        };
+
+        const triggerCashierReaction = () => {
+            cashierHead.animate([
+                { transform: 'scale(1) rotate(0deg)' },
+                { transform: 'scale(1.15) rotate(-10deg)' },
+                { transform: 'scale(1.1) rotate(10deg)' },
+                { transform: 'scale(1.05) rotate(-5deg)' },
+                { transform: 'scale(1) rotate(0deg)' }
+            ], { duration: 500, easing: 'ease-in-out' });
+
+            cashierMouth.style.cssText = 'border-radius: 0 0 30px 30px; width: 50px; height: 26px; border-color: transparent; background-color: #d28e5d;';
+            setTimeout(() => {
+                cashierMouth.style.cssText = '';
+            }, 1000);
+
+            const dialogs = [
+                'Laper ya? Yuk pilih menunya!',
+                'Nasi Goreng Spesial kami juara lho!',
+                'Pesanan diantar secepat kilat!',
+                'Jangan lupa coba Ayam Gepreknya ya!',
+                'Senang melayani Kakak hari ini!'
+            ];
+            cashierSpeech.childNodes[0].textContent = dialogs[Math.floor(Math.random() * dialogs.length)];
+            showToast('Koki merespon senyumanmu!');
+        };
+
+        const detectTable = () => {
+            detectIcon.classList.add('fa-spin');
+            setTimeout(() => {
+                detectIcon.classList.remove('fa-spin', 'fa-location-crosshairs');
+                detectIcon.classList.add('fa-check', 'text-green-500');
+                tableInput.value = Math.floor(Math.random() * 20) + 1;
+                showToast('Meja berhasil dideteksi otomatis!');
+                setTimeout(() => {
+                    detectIcon.classList.remove('fa-check', 'text-green-500');
+                    detectIcon.classList.add('fa-location-crosshairs');
+                }, 3000);
+            }, 800);
+        };
+
+        const mataKasir = document.querySelectorAll('.mata-kasir');
+        let posisiKursor = null;
+        let pembaruanMataTerjadwal = false;
+
+        const perbaruiMata = () => {
+            pembaruanMataTerjadwal = false;
+            if (!posisiKursor) return;
+
+            mataKasir.forEach((eye) => {
+                const rect = eye.getBoundingClientRect();
+                const angle = Math.atan2(
+                    posisiKursor.y - (rect.top + rect.height / 2),
+                    posisiKursor.x - (rect.left + rect.width / 2)
+                );
+                const pupil = eye.querySelector('.pupil-kasir');
+                pupil.style.transform = `translate(${Math.cos(angle) * 8}px, ${Math.sin(angle) * 8}px)`;
+            });
+        };
+
+        document.addEventListener('pointermove', (event) => {
+            posisiKursor = { x: event.clientX, y: event.clientY };
+            if (!pembaruanMataTerjadwal) {
+                pembaruanMataTerjadwal = true;
+                requestAnimationFrame(perbaruiMata);
+            }
+        }, { passive: true });
+
+        document.getElementById('cashier-button').addEventListener('click', triggerCashierReaction);
+        cashierSpeech.addEventListener('click', triggerCashierReaction);
+        detectButton.addEventListener('click', detectTable);
+
+        form.addEventListener('submit', (event) => {
+            event.preventDefault();
+            if (!nameInput.value.trim() || !tableInput.value.trim()) {
+                showToast('Mohon isi Nama dan Nomor Meja terlebih dahulu.');
+                return;
+            }
+            showToast(`Selamat datang, ${nameInput.value.trim()}! Meja ${tableInput.value.trim()} siap digunakan.`);
+        });
+    </script>
+</body>
+</html>

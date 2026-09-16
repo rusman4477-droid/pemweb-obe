@@ -1,124 +1,64 @@
 <!doctype html>
 <html lang="id">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="KafeQR - Sistem pemesanan makanan self-service berbasis QR Code untuk kafe/restoran lokal di Tarakan">
-  <title>KafeQR - Pesan Mudah dari Meja Anda</title>
+  <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tap Order</title>
+  <meta name="description" content="Pesan makanan dan minuman langsung dari meja Anda tanpa perlu mengantre di kasir.">
 </head>
 <body>
 
   <header>
-    <a href="#main">Lewati ke konten utama</a>
-    <a href="#" aria-label="Beranda KafeQR">
-      <img src="assets/logo-kafe.png" alt="Logo KafeQR" width="48" height="48">
-    </a>
-    <h1>KafeQR</h1>
-    <p>Pesan langsung dari meja Anda, tanpa perlu mengantre di kasir.</p>
-    <nav aria-label="Navigasi utama">
-      <a href="#tentang">Tentang</a>
-      <a href="#menu">Menu</a>
-      <a href="#ulasan">Ulasan</a>
-      <a href="#kritik-saran">Kritik &amp; Saran</a>
-      <a href="#kontak">Kontak</a>
-    </nav>
+    <p>Tap Order</p>
+    <p>Tarakan, Kalimantan Utara</p>
   </header>
 
-  <main id="main">
+  <main id="main-content">
+    <section aria-labelledby="judul-sambutan">
 
-    <!-- Section 1: Tentang / cara kerja -->
-    <section id="tentang" aria-labelledby="tentang-heading">
-      <h2 id="tentang-heading">Bagaimana Cara Memesan?</h2>
-      <p>
-        Pindai kode QR yang tersedia di meja Anda, pilih menu favorit, lalu pesanan
-        akan langsung masuk ke dapur dan dashboard pengelola secara real-time.
-      </p>
-      <img src="assets/illustrasi.png" alt=""> <!-- gambar dekoratif -->
-    </section>
+      <img src="kasir-tersenyum.svg" alt="Ilustrasi kasir tersenyum ramah menyambut pelanggan">
 
-    <!-- Section 2: Menu, berisi beberapa article (konten mandiri per item) -->
-    <section id="menu" aria-labelledby="menu-heading">
-      <h2 id="menu-heading">Menu Kafe</h2>
+      <h1 id="judul-sambutan">Selamat datang!</h1>
+      <p>Pesan langsung dari meja Anda — tanpa perlu mengantre di kasir.</p>
 
-      <article>
-        <h3>Kopi Susu Gula Aren</h3>
-        <img src="assets/menu-kopi-susu-gula-aren.png"
-             alt="Segelas kopi susu gula aren dengan lapisan gula aren di dasar gelas">
-        <p>Perpaduan espresso, susu segar, dan gula aren asli. Rp 18.000</p>
-        <button type="button">Tambah ke Pesanan</button>
-      </article>
+      <hr>
 
-      <article>
-        <h3>Nasi Goreng Seafood</h3>
-        <img src="assets/menu-nasi-goreng-seafood.jpg"
-             alt="Sepiring nasi goreng dengan udang, cumi, dan taburan bawang goreng">
-        <p>Nasi goreng khas dengan udang dan cumi segar. Rp 25.000</p>
-        <button type="button">Tambah ke Pesanan</button>
-      </article>
+      <form id="form-pesan" action="menu.html" method="get">
 
-      <article>
-        <h3>Roti Bakar Cokelat Keju</h3>
-        <img src="assets/menu-roti-bakar-cokelat-keju.jpg"
-             alt="Roti bakar terbelah dua dengan isian cokelat leleh dan keju parut">
-        <p>Roti bakar renyah dengan isian cokelat dan keju melimpah. Rp 15.000</p>
-        <button type="button">Tambah ke Pesanan</button>
-      </article>
-    </section>
+        <div>
+          <label for="nama-pelanggan">Nama Anda</label>
+          <input
+            type="text"
+            id="nama-pelanggan"
+            name="nama"
+            placeholder="masukkan nama anda"
+            autocomplete="name"
+            required
+            aria-describedby="hint-nama">
+          <!-- <span id="hint-nama">Dipakai agar pesanan mudah dikenali di dapur dan kasir.</span> -->
+        </div>
 
-    <!-- Section 3: Direct review ke Google Maps -->
-    <section id="ulasan" aria-labelledby="ulasan-heading">
-      <h2 id="ulasan-heading">Puas dengan Layanan Kami?</h2>
-      <p>Bantu kami berkembang dengan memberikan rating dan ulasan di Google Maps.</p>
-      <a href="https://maps.google.com/?cid=CONTOH_ID_KAFE" target="_blank" rel="noopener">
-        Beri Ulasan di Google Maps
-      </a>
-    </section>
-
-    <!-- Section 4: Kritik & saran privat, berisi form -->
-    <section id="kritik-saran" aria-labelledby="kritik-saran-heading">
-      <h2 id="kritik-saran-heading">Kritik &amp; Saran Pribadi</h2>
-      <p>
-        Masukan Anda di sini bersifat privat dan hanya dapat dibaca oleh pemilik kafe,
-        tidak akan dipublikasikan.
-      </p>
-
-      <form action="/proses-kritik-saran" method="post">
         <div>
           <label for="nomor-meja">Nomor Meja</label>
-          <input id="nomor-meja" name="nomor_meja" type="number" min="1" required>
+          <input
+            type="text"
+            id="nomor-meja"
+            name="meja"
+            inputmode="numeric"
+            placeholder="mis. 07"
+            required
+            aria-describedby="hint-meja">
+          <!-- <span id="hint-meja">Terisi otomatis jika Anda membuka halaman ini lewat pindai kode QR di meja.</span> -->
         </div>
 
-        <div>
-          <label for="kategori">Kategori Masukan</label>
-          <select id="kategori" name="kategori" required>
-            <option value="">-- Pilih kategori --</option>
-            <option value="rasa">Rasa Makanan/Minuman</option>
-            <option value="pelayanan">Pelayanan</option>
-            <option value="kebersihan">Kebersihan</option>
-            <option value="lainnya">Lainnya</option>
-          </select>
-        </div>
-
-        <div>
-          <label for="pesan">Pesan Anda</label>
-          <textarea id="pesan" name="pesan" rows="4" required></textarea>
-        </div>
-
-        <div>
-          <label for="email-opsional">Email (opsional, jika ingin ditanggapi)</label>
-          <input id="email-opsional" name="email" type="email">
-        </div>
-
-        <button type="submit">Kirim Masukan</button>
+        <button type="submit">Mulai Pesan Sekarang</button>
       </form>
     </section>
-
   </main>
 
   <footer>
-    <h2>Kontak</h2>
-    <p id="kontak">Jl. Contoh Alamat No. 1, Tarakan, Kalimantan Utara</p>
-    <p>&copy; 2026 KafeQR. Proyek Tugas Akhir Pemrograman Web - Universitas Borneo Tarakan.</p>
+    <p>Tap Order &middot; pemesanan mandiri berbasis kode QR</p>
   </footer>
 
 </body>

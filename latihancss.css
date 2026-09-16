@@ -1,0 +1,194 @@
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  color: #2E241B;
+  background: #FAF5EC;
+  line-height: 1.5;
+}
+img { display: block; max-width: 100%; }
+a { color: inherit; }
+
+/* =============================================================
+   LATIHAN 2 — NAVIGASI YANG WRAP TANPA SCROLL HORIZONTAL
+   -------------------------------------------------------------
+   Kuncinya cuma dua: display:flex + flex-wrap:wrap.
+   Tanpa flex-wrap, kalau ruang sempit, browser akan memaksa
+   semua item pas dalam satu baris (item mengecil ekstrem) atau
+   overflow ke samping. Dengan flex-wrap:wrap, item yang tidak
+   muat otomatis pindah ke baris baru.
+   ============================================================= */
+.navbar {
+  display: flex;
+  flex-wrap: wrap;                 /* <-- ini kuncinya */
+  gap: 0.5rem 1.25rem;             /* jarak antar baris & antar item beda */
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 5%;                /* % → menyesuaikan lebar layar apa pun */
+  background: #2E241B;
+}
+.navbar__brand {
+  font-weight: 700;
+  font-size: 1.125rem;
+  color: #F4E3C1;
+  letter-spacing: 0.01em;
+}
+.navbar__links {
+  display: flex;
+  flex-wrap: wrap;                 /* daftar link-nya sendiri juga wrap */
+  gap: 0.25rem 1rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.navbar__links a {
+  display: inline-block;
+  padding: 0.4rem 0.6rem;
+  text-decoration: none;
+  color: #EFE4D2;
+  border-radius: 0.375rem;
+  white-space: nowrap;             /* teks per-link tidak pecah di tengah kata */
+}
+.navbar__links a:hover,
+.navbar__links a:focus-visible {
+  background: rgba(244, 227, 193, 0.15);
+  outline: 2px solid transparent;
+}
+.navbar__links a:focus-visible {
+  outline: 2px solid #E8A33D;
+  outline-offset: 2px;
+}
+
+/* =============================================================
+   LATIHAN 3 — HERO: PERBANDINGAN px, rem, %, fr, clamp()
+   -------------------------------------------------------------
+   Setiap unit dipakai di tempat yang paling masuk akal untuknya,
+   dan diberi komentar supaya kelihatan alasannya.
+   ============================================================= */
+.hero {
+  display: grid;
+  /* fr = "sisa ruang dibagi proporsional". 2fr:1fr artinya kolom
+     teks selalu 2x lebih lebar dari kolom gambar, di ukuran layar
+     berapa pun — beda dengan pakai px yang akan tetap kaku. */
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;                        /* rem: 1rem = ukuran font root (biasanya 16px),
+                                        dipakai untuk jarak supaya proporsinya
+                                        konsisten walau user mengubah setting
+                                        ukuran font browser */
+  align-items: center;
+  width: 90%;                       /* % : relatif ke elemen induk (body),
+                                        jadi otomatis menyempit/melebar
+                                        mengikuti layar */
+  max-width: 1100px;
+  margin: 2rem auto;
+  padding: clamp(1.5rem, 5vw, 4rem);
+  /* clamp(min, ideal, max): di layar kecil paddingnya 1.5rem,
+     di layar besar sekali max 4rem, di antaranya mengikuti 5% lebar
+     viewport. Satu baris ini menggantikan 2-3 media query. */
+  background: #FFFFFF;
+  border-radius: 1.25rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+.hero__text h1 {
+  margin: 0 0 0.75rem;
+  font-size: clamp(1.5rem, 4vw, 2.75rem);
+  /* clamp lagi di sini: judul besar di layar lebar, tapi tidak
+     kebablasan meraksasa di layar sangat lebar, dan tidak kekecilan
+     di layar HP. */
+  line-height: 1.15;
+  color: #2E241B;
+}
+.hero__text p {
+  margin: 0 0 1.25rem;
+  font-size: 1rem;                  /* rem: teks isi tetap terbaca konsisten
+                                        di semua perangkat */
+  color: #5B4A3A;
+  max-width: 42ch;
+}
+.hero__badge {
+  display: inline-block;
+  padding: 6px 12px;                /* px: elemen kecil yang memang sengaja
+                                        dibuat berukuran tetap, tidak perlu
+                                        ikut membesar mengikuti layar */
+  border: 1px solid #D8C7AC;
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  color: #5B4A3A;
+  margin-bottom: 1rem;
+}
+.hero__image {
+  aspect-ratio: 4 / 3;
+  border-radius: 1rem;
+  background: linear-gradient(135deg, #E8A33D, #C97D2E);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFF8EC;
+  font-size: 0.875rem;
+  text-align: center;
+  padding: 1rem;
+}
+
+/* =============================================================
+   LATIHAN 1 — GRID: 1 KOLOM MOBILE, 3 KOLOM LAYAR LEBAR
+   -------------------------------------------------------------
+   Default (mobile-first): 1fr = satu kolom penuh.
+   Lewat @media di atas 768px, diganti jadi repeat(3, 1fr).
+   ============================================================= */
+.menu-section {
+  padding: 1rem 5% 3rem;
+}
+.menu-section h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #2E241B;
+}
+.menu-grid {
+  display: grid;
+  grid-template-columns: 1fr;      /* mobile: 1 kolom */
+  gap: 1.25rem;
+}
+@media (min-width: 768px) {
+  .menu-grid {
+    grid-template-columns: repeat(3, 1fr); /* layar lebar: 3 kolom sama rata */
+  }
+}
+.menu-card {
+  background: #FFFFFF;
+  border: 1px solid #EFE4D2;
+  border-radius: 0.75rem;
+  padding: 1rem;
+}
+.menu-card__thumb {
+  aspect-ratio: 4 / 3;
+  border-radius: 0.5rem;
+  background: #F4E3C1;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9C7A45;
+  font-size: 0.8125rem;
+}
+.menu-card h3 {
+  margin: 0 0 0.25rem;
+  font-size: 1.0625rem;
+}
+.menu-card p {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #5B4A3A;
+}
+.menu-card .harga {
+  display: block;
+  margin-top: 0.5rem;
+  font-weight: 700;
+  color: #C97D2E;
+}
+
+footer {
+  padding: 1.5rem 5%;
+  text-align: center;
+  font-size: 0.8125rem;
+  color: #9C8874;
+}

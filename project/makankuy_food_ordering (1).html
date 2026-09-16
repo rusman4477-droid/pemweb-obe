@@ -1,0 +1,1055 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MakanKuy - Pesan Makanan Favoritmu</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- AOS Animation CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#f97316', // Orange 500
+                        secondary: '#ea580c', // Orange 600
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-gray-50 text-gray-800 antialiased overflow-hidden" id="body-main">
+
+    <!-- WELCOME SCREEN -->
+    <div id="welcome-screen" class="fixed inset-0 bg-white/95 backdrop-blur-md z-[100] flex items-center justify-center p-4">
+        <div class="bg-white p-8 md:p-12 rounded-[2.5rem] shadow-2xl border border-orange-100 max-w-md w-full relative overflow-hidden">
+            <!-- Decorative blobs -->
+            <div class="absolute top-0 right-0 -mr-16 -mt-16 w-32 h-32 bg-orange-200 rounded-full blur-3xl opacity-50 pointer-events-none"></div>
+            <div class="absolute bottom-0 left-0 -ml-16 -mb-16 w-32 h-32 bg-yellow-200 rounded-full blur-3xl opacity-50 pointer-events-none"></div>
+            
+            <div class="relative z-10 text-center">
+                <!-- Character with interactive speech bubble -->
+                <div class="relative inline-block mb-6">
+                    <!-- Speech Bubble -->
+                    <div id="cashier-speech" onclick="triggerCashierReaction()" class="speech-bubble absolute -top-12 left-1/2 transform -translate-x-1/2 bg-orange-500 text-white text-xs font-bold py-1.5 px-4 rounded-full shadow-lg whitespace-nowrap cursor-pointer hover:bg-orange-600 transition-colors z-30">
+                         Klik aku untuk sapaan & kejutan!
+                        <div class="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-2.5 h-2.5 bg-orange-500 rotate-45"></div>
+                    </div>
+
+                    <div class="cashier-container" onclick="triggerCashierReaction()">
+                        <div class="cashier-head" id="cashier-head-el">
+                            <div class="cashier-hat"></div>
+                            <div class="cashier-eye left"><div class="cashier-pupil" id="pupil-left"></div></div>
+                            <div class="cashier-eye right"><div class="cashier-pupil" id="pupil-right"></div></div>
+                            <div class="cashier-blush left"></div>
+                            <div class="cashier-blush right"></div>
+                            <div class="cashier-mouth" id="cashier-mouth-el"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">Selamat Datang! <span class="animate-wave">ðŸ‘‹</span></h1>
+                <p class="text-gray-500 mb-8">Silakan isi data meja Anda sebelum memesan makanan lezat kami.</p>
+
+                <!-- Input Form -->
+                <div class="space-y-4 mb-8">
+                    <div class="text-left">
+                        <label class="block text-sm font-semibold text-gray-700 mb-1 ml-2">Nama Anda</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <i class="fa-regular fa-user text-gray-400"></i>
+                            </div>
+                            <input type="text" id="name-input" placeholder="Ketik nama panggilan..." class="w-full bg-gray-50 border border-gray-200 text-gray-800 rounded-2xl pl-11 pr-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all shadow-sm">
+                        </div>
+                    </div>
+
+                    <div class="text-left">
+                        <label class="block text-sm font-semibold text-gray-700 mb-1 ml-2">Nomor Meja</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <i class="fa-solid fa-chair text-gray-400"></i>
+                            </div>
+                            <input type="number" id="table-input" placeholder="Cth: 12" class="w-full bg-gray-50 border border-gray-200 text-gray-800 rounded-2xl pl-11 pr-12 py-3.5 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all shadow-sm">
+                            <button onclick="autoDetectTable()" class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-primary transition-colors group" title="Auto-detect dari QR">
+                                <i id="detect-icon" class="fa-solid fa-location-crosshairs group-hover:scale-110 transition-transform"></i>
+                            </button>
+                        </div>
+                        <p class="text-[11px] text-gray-400 mt-1 ml-2"><i class="fa-solid fa-circle-info mr-1"></i>Klik ikon target untuk auto-detect.</p>
+                    </div>
+                </div>
+
+                <button onclick="startOrdering()" class="w-full bg-gradient-to-r from-primary to-secondary hover:from-orange-600 hover:to-orange-700 text-white font-bold py-4 px-8 rounded-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+                    Mulai Pesan Sekarang <i class="fa-solid fa-arrow-right ml-2"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <nav class="fixed w-full z-40 bg-white/90 backdrop-blur-md shadow-sm transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center cursor-pointer" onclick="window.scrollTo(0,0)">
+                    <i class="fa-solid fa-burger text-3xl text-primary mr-2"></i>
+                    <span class="font-bold text-2xl tracking-tight">Makan<span class="text-primary">Kuy</span></span>
+                </div>
+                
+                <!-- Desktop Menu & Cart -->
+                <div class="flex items-center space-x-6">
+                    <a href="#menu" class="hidden md:block text-gray-600 hover:text-primary font-medium transition-colors">Menu</a>
+                    <a href="#about" class="hidden md:block text-gray-600 hover:text-primary font-medium transition-colors">Tentang</a>
+                    
+                    <!-- Cart Button -->
+                    <button onclick="toggleCart()" class="relative p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition text-gray-700">
+                        <i class="fa-solid fa-basket-shopping text-xl"></i>
+                        <!-- Cart Badge -->
+                        <span id="cart-badge" class="absolute top-0 right-0 -mt-1 -mr-1 flex items-center justify-center bg-red-500 text-white text-xs font-bold h-5 w-5 rounded-full scale-0 transition-transform duration-200">
+                            0
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section class="relative pt-32 pb-20 lg:pt-40 lg:pb-28 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <!-- Hero Text -->
+                <div data-aos="fade-right" data-aos-duration="1000">
+                    <span class="inline-block py-1 px-3 rounded-full bg-orange-100 text-primary font-semibold text-sm mb-4">
+                        ðŸ”¥ Diskon 20% untuk Pengguna Baru
+                    </span>
+                    <h1 id="hero-title" class="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
+                        Pesan Makanan Favoritmu Tanpa <span class="text-primary">Ribet!</span>
+                    </h1>
+                    <p class="text-lg text-gray-600 mb-8 max-w-lg">
+                        MakanKuy menyajikan berbagai hidangan lezat langsung ke pintu rumahmu. Cepat, hangat, dan dijamin memuaskan selera.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <a href="#menu" class="bg-primary hover:bg-secondary text-white font-semibold py-3 px-8 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 text-center">
+                            Pesan Sekarang
+                        </a>
+                        <a href="#about" class="bg-white border-2 border-gray-200 hover:border-gray-300 text-gray-700 font-semibold py-3 px-8 rounded-full transition-all duration-300 text-center">
+                            Cara Kerja
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Hero Image -->
+                <div class="relative" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="200">
+                    <div class="absolute inset-0 bg-gradient-to-tr from-orange-200 to-yellow-100 rounded-full blur-3xl opacity-50 transform -translate-x-10 translate-y-10"></div>
+                    <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80" alt="Delicious Food" class="relative z-10 w-full rounded-[2rem] shadow-2xl object-cover h-[400px] lg:h-[500px]">
+                    
+                    <!-- Floating Badge -->
+                    <div class="absolute bottom-10 -left-6 lg:-left-12 z-20 bg-white p-4 rounded-2xl shadow-xl flex items-center gap-4 animate-bounce" style="animation-duration: 3s;">
+                        <div class="bg-green-100 p-3 rounded-full text-green-500">
+                            <i class="fa-solid fa-motorcycle text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="font-bold text-gray-800">Pengiriman Cepat</p>
+                            <p class="text-sm text-gray-500">Kurang dari 30 Menit</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="menu" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Menu Pilihan <span class="text-primary">Terbaik</span></h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">Pilih dari berbagai kategori makanan yang kami sajikan khusus untuk memanjakan lidah Anda hari ini.</p>
+            </div>
+            
+            <!-- Category Filter (Visual Only for this demo) -->
+            <div class="flex justify-center gap-4 mb-12 flex-wrap" data-aos="fade-up" data-aos-delay="100">
+                <button class="px-6 py-2 bg-primary text-white rounded-full font-medium shadow-md">Semua</button>
+                <button class="px-6 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full font-medium transition">Nasi</button>
+                <button class="px-6 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full font-medium transition">Mie</button>
+                <button class="px-6 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full font-medium transition">Minuman</button>
+            </div>
+
+            <!-- Menu Grid Container -->
+            <div id="menu-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Menu items will be injected here by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <section id="about" class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                <div class="bg-white p-8 rounded-3xl shadow-sm hover:shadow-md transition-shadow" data-aos="fade-up" data-aos-delay="100">
+                    <div class="w-16 h-16 bg-orange-100 text-primary rounded-full flex items-center justify-center text-2xl mx-auto mb-6">
+                        <i class="fa-solid fa-fire-burner"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Dimasak Langsung</h3>
+                    <p class="text-gray-600">Makanan disiapkan langsung saat pesanan masuk, memastikan kesegaran dan cita rasa terbaik.</p>
+                </div>
+                <div class="bg-white p-8 rounded-3xl shadow-sm hover:shadow-md transition-shadow" data-aos="fade-up" data-aos-delay="200">
+                    <div class="w-16 h-16 bg-orange-100 text-primary rounded-full flex items-center justify-center text-2xl mx-auto mb-6">
+                        <i class="fa-solid fa-leaf"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Bahan Pilihan</h3>
+                    <p class="text-gray-600">Hanya menggunakan bahan-bahan segar berkualitas tinggi dari supplier terpercaya kami.</p>
+                </div>
+                <div class="bg-white p-8 rounded-3xl shadow-sm hover:shadow-md transition-shadow" data-aos="fade-up" data-aos-delay="300">
+                    <div class="w-16 h-16 bg-orange-100 text-primary rounded-full flex items-center justify-center text-2xl mx-auto mb-6">
+                        <i class="fa-solid fa-motorcycle"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Pengiriman Cepat</h3>
+                    <p class="text-gray-600">Kurir kami siap mengantar pesanan Anda dalam waktu singkat dengan aman sampai tujuan.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center md:text-left grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div>
+                <div class="flex items-center justify-center md:justify-start mb-4">
+                    <i class="fa-solid fa-burger text-2xl text-primary mr-2"></i>
+                    <span class="font-bold text-xl">Makan<span class="text-primary">Kuy</span></span>
+                </div>
+                <p class="text-gray-400 text-sm">Platform pesan antar makanan tercepat, terenak, dan termudah di kota Anda.</p>
+            </div>
+            <div>
+                <h4 class="font-bold mb-4">Tautan</h4>
+                <ul class="text-gray-400 text-sm space-y-2">
+                    <li><a href="#" class="hover:text-primary transition">Beranda</a></li>
+                    <li><a href="#menu" class="hover:text-primary transition">Menu Kami</a></li>
+                    <li><a href="#about" class="hover:text-primary transition">Tentang Kami</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-bold mb-4">Hubungi Kami</h4>
+                <div class="flex justify-center md:justify-start space-x-4">
+                    <a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary transition"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary transition"><i class="fa-brands fa-whatsapp"></i></a>
+                    <a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary transition"><i class="fa-solid fa-envelope"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="mt-12 pt-8 border-t border-gray-800 text-center text-gray-500 text-sm">
+            &copy; 2026 MakanKuy. All rights reserved. (Demo Frontend)
+        </div>
+    </footer>
+
+    <!-- Cart Overlay -->
+    <div id="cart-overlay" onclick="toggleCart()" class="fixed inset-0 bg-black/50 z-40 hidden opacity-0 transition-opacity duration-300"></div>
+
+    <!-- Cart Drawer -->
+    <div id="cart-drawer" class="fixed top-0 right-0 h-full w-full sm:w-96 bg-white z-50 transform translate-x-full shadow-2xl flex flex-col">
+        <!-- Cart Header -->
+        <div class="p-5 border-b flex justify-between items-center bg-gray-50">
+            <h2 class="text-xl font-bold"><i class="fa-solid fa-basket-shopping mr-2 text-primary"></i> Keranjang Anda</h2>
+            <button onclick="toggleCart()" class="text-gray-400 hover:text-red-500 transition text-2xl">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        
+        <!-- Cart Items -->
+        <div id="cart-items" class="flex-1 overflow-y-auto p-5 space-y-4">
+            <!-- Empty state shown by default -->
+            <div id="empty-cart" class="text-center text-gray-500 mt-10">
+                <i class="fa-solid fa-cart-arrow-down text-5xl mb-4 text-gray-300"></i>
+                <p>Keranjang masih kosong.</p>
+                <p class="text-sm">Yuk pilih makanan lezat di menu!</p>
+            </div>
+            <!-- Injected via JS -->
+        </div>
+
+        <!-- Cart Footer / Checkout -->
+        <div class="p-5 border-t bg-gray-50">
+            <div class="flex justify-between items-center mb-4">
+                <span class="text-gray-600">Total Pembayaran</span>
+                <span id="cart-total" class="text-xl font-bold text-gray-800">Rp 0</span>
+            </div>
+            <button onclick="checkout()" id="checkout-btn" class="w-full bg-primary hover:bg-secondary text-white font-bold py-3 rounded-xl shadow-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                Checkout Sekarang
+            </button>
+        </div>
+    </div>
+
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2"></div>
+
+    <!-- Custom Modal for Checkout Success (Replacing alert) -->
+    <div id="success-modal" class="fixed inset-0 bg-black/60 z-[60] hidden flex items-center justify-center opacity-0 transition-opacity duration-300 px-4">
+        <div class="bg-white rounded-3xl p-8 max-w-sm w-full text-center transform scale-90 transition-transform duration-300" id="success-modal-content">
+            <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fa-solid fa-check text-4xl text-green-500"></i>
+            </div>
+            <h3 class="text-2xl font-bold mb-2">Pesanan Diterima!</h3>
+            <p class="text-gray-600 mb-8">Terima kasih. Pesanan Anda sedang kami proses dan akan segera diantar.</p>
+            <button onclick="closeSuccessModal()" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-xl transition-colors">
+                Kembali ke Beranda
+            </button>
+        </div>
+    </div>
+
+    <!-- AI Chatbot Widget -->
+    <div id="ai-chat-container" class="fixed bottom-5 left-5 z-50">
+        <!-- Floating Action Button -->
+        <button onclick="toggleChat()" class="w-14 h-14 bg-gradient-to-r from-primary to-secondary text-white rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all flex items-center justify-center text-2xl group">
+            <i class="fa-solid fa-robot group-hover:animate-bounce"></i>
+            <span class="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full animate-pulse border-2 border-white">AI</span>
+        </button>
+
+        <!-- Chat Window -->
+        <div id="chat-widget" class="chat-closed absolute bottom-16 left-0 w-[calc(100vw-40px)] sm:w-96 bg-white rounded-2xl shadow-2xl border border-gray-100 flex flex-col h-[28rem] overflow-hidden origin-bottom-left">
+            <!-- Header -->
+            <div class="bg-gradient-to-r from-primary to-secondary p-4 text-white flex justify-between items-center shadow-md z-10">
+                <div class="flex items-center gap-3">
+                    <div class="bg-white/20 p-2 rounded-full backdrop-blur-sm">
+                        <i class="fa-solid fa-robot text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-sm tracking-wide">Asisten AI MakanKuy</h3>
+                        <p class="text-[10px] text-orange-100 flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-green-400 inline-block animate-pulse"></span> Online
+                        </p>
+                    </div>
+                </div>
+                <button onclick="toggleChat()" class="text-white hover:text-orange-200 transition p-1">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Messages Area -->
+            <div id="chat-messages" class="flex-1 p-4 overflow-y-auto bg-[#f8fafc] flex flex-col gap-4 text-sm">
+                <!-- Welcome Message -->
+                <div class="flex items-start gap-2 max-w-[85%]">
+                    <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-orange-100 to-orange-200 text-primary flex items-center justify-center flex-shrink-0 shadow-sm border border-orange-50">
+                        <i class="fa-solid fa-robot text-xs"></i>
+                    </div>
+                    <div class="bg-white p-3 rounded-2xl rounded-tl-none shadow-sm text-gray-700 leading-relaxed border border-gray-100">
+                        Halo! ðŸ‘‹ Saya Asisten AI MakanKuy.<br>Lagi bingung mau makan apa? Tanyakan saja rekomendasi atau info menu ke saya!
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="p-3 bg-white border-t border-gray-100 flex gap-2 items-center shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-10">
+                <input type="text" id="chat-input" placeholder="Ketik pertanyaan..." class="flex-1 bg-gray-50 border border-gray-200 rounded-full px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm transition-all" onkeypress="handleChatKeyPress(event)">
+                <button onclick="sendChatMessage()" id="chat-send-btn" class="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center hover:bg-secondary hover:shadow-md transition flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <i class="fa-solid fa-paper-plane text-sm"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- AOS Script -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <script>
+        // Initialize Animate On Scroll
+        AOS.init({
+            once: true,
+            offset: 50,
+            duration: 800,
+        });
+
+        // Application State
+        let cart = [];
+        
+        // Mock Database for Menu Items
+        const menuData = [
+            {
+                id: 1,
+                name: "Nasi Goreng Spesial",
+                description: "Nasi goreng dengan bumbu rahasia, telur mata sapi, ayam suwir, dan kerupuk.",
+                price: 25000,
+                category: "Nasi",
+                image: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=600&q=80",
+                rating: 4.8
+            },
+            {
+                id: 2,
+                name: "Mie Ayam Jamur",
+                description: "Mie kenyal dengan topping ayam cincang gurih, jamur, dan kuah kaldu sapi.",
+                price: 20000,
+                category: "Mie",
+                image: "https://images.unsplash.com/photo-1585032226651-759b368d7246?auto=format&fit=crop&w=600&q=80",
+                rating: 4.7
+            },
+            {
+                id: 3,
+                name: "Sate Ayam Madura",
+                description: "10 Tusuk sate ayam dengan bumbu kacang kental, kecap manis, dan lontong.",
+                price: 30000,
+                category: "Daging",
+                image: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=600&q=80",
+                rating: 4.9
+            },
+            {
+                id: 4,
+                name: "Ayam Geprek Sambal Korek",
+                description: "Ayam crispy digeprek dengan sambal korek super pedas. Free nasi putih.",
+                price: 22000,
+                category: "Nasi",
+                image: "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?auto=format&fit=crop&w=600&q=80",
+                rating: 4.6
+            },
+            {
+                id: 5,
+                name: "Ramen Kuah Pedas",
+                description: "Ramen otentik dengan kuah pedas, telur rebus, daging slice, dan nori.",
+                price: 35000,
+                category: "Mie",
+                image: "https://images.unsplash.com/photo-1552611052-33e04de081de?auto=format&fit=crop&w=600&q=80",
+                rating: 4.8
+            },
+            {
+                id: 6,
+                name: "Es Jeruk Peras Segar",
+                description: "Jeruk peras asli dengan es batu. Menyegarkan dahaga setelah makan.",
+                price: 10000,
+                category: "Minuman",
+                image: "https://images.unsplash.com/photo-1600271886742-f049cd451bba?auto=format&fit=crop&w=600&q=80",
+                rating: 4.5
+            }
+        ];
+
+        // Helper: Format to Rupiah
+        const formatRupiah = (number) => {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0
+            }).format(number);
+        };
+
+        // Render Menu Items to DOM
+        const renderMenu = () => {
+            const menuGrid = document.getElementById('menu-grid');
+            menuGrid.innerHTML = ''; // Clear initial
+            
+            menuData.forEach((item, index) => {
+                // Determine animation delay based on grid position
+                const delay = (index % 3) * 100;
+
+                const cardHTML = `
+                    <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 group" data-aos="fade-up" data-aos-delay="${delay}">
+                        <div class="relative overflow-hidden h-56">
+                            <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                            <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-lg text-sm font-bold text-gray-800 flex items-center shadow-sm">
+                                <i class="fa-solid fa-star text-yellow-400 mr-1 text-xs"></i> ${item.rating}
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="text-xl font-bold text-gray-800 group-hover:text-primary transition-colors">${item.name}</h3>
+                            </div>
+                            <p class="text-gray-500 text-sm mb-4 line-clamp-2">${item.description}</p>
+                            <div class="flex justify-between items-center mt-auto">
+                                <span class="text-xl font-bold text-primary">${formatRupiah(item.price)}</span>
+                                <button onclick="addToCart(${item.id})" class="bg-gray-900 hover:bg-primary text-white w-10 h-10 rounded-full flex items-center justify-center transition-colors shadow-md active:scale-95">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                menuGrid.innerHTML += cardHTML;
+            });
+        };
+
+        // Add item to cart logic
+        const addToCart = (productId) => {
+            const product = menuData.find(item => item.id === productId);
+            if (!product) return;
+
+            const existingItem = cart.find(item => item.id === productId);
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({ ...product, quantity: 1 });
+            }
+
+            updateCartUI();
+            showToast(`${product.name} ditambahkan ke keranjang!`);
+            
+            // Animate badge
+            const badge = document.getElementById('cart-badge');
+            badge.classList.remove('scale-100');
+            badge.classList.add('scale-125');
+            setTimeout(() => {
+                badge.classList.remove('scale-125');
+                badge.classList.add('scale-100');
+            }, 200);
+        };
+
+        // Increase quantity
+        const increaseQuantity = (productId) => {
+            const item = cart.find(item => item.id === productId);
+            if(item) {
+                item.quantity += 1;
+                updateCartUI();
+            }
+        };
+
+        // Decrease quantity
+        const decreaseQuantity = (productId) => {
+            const itemIndex = cart.findIndex(item => item.id === productId);
+            if (itemIndex > -1) {
+                if (cart[itemIndex].quantity > 1) {
+                    cart[itemIndex].quantity -= 1;
+                } else {
+                    cart.splice(itemIndex, 1);
+                }
+                updateCartUI();
+            }
+        };
+
+        // Update Cart DOM and Totals
+        const updateCartUI = () => {
+            const cartItemsContainer = document.getElementById('cart-items');
+            const emptyCartMsg = document.getElementById('empty-cart');
+            const cartBadge = document.getElementById('cart-badge');
+            const cartTotal = document.getElementById('cart-total');
+            const checkoutBtn = document.getElementById('checkout-btn');
+
+            // Update Badge Count
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            cartBadge.textContent = totalItems;
+            
+            if (totalItems > 0) {
+                cartBadge.classList.remove('scale-0');
+                cartBadge.classList.add('scale-100');
+            } else {
+                cartBadge.classList.remove('scale-100');
+                cartBadge.classList.add('scale-0');
+            }
+
+            // Update Items List
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = '';
+                cartItemsContainer.appendChild(emptyCartMsg);
+                emptyCartMsg.style.display = 'block';
+                checkoutBtn.disabled = true;
+                cartTotal.textContent = 'Rp 0';
+                return;
+            }
+
+            emptyCartMsg.style.display = 'none';
+            cartItemsContainer.innerHTML = '';
+
+            let totalPrice = 0;
+
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                totalPrice += itemTotal;
+
+                const itemHTML = `
+                    <div class="flex gap-4 p-3 bg-white border rounded-xl shadow-sm">
+                        <img src="${item.image}" alt="${item.name}" class="w-20 h-20 object-cover rounded-lg">
+                        <div class="flex-1 flex flex-col justify-between">
+                            <div>
+                                <h4 class="font-bold text-sm text-gray-800 line-clamp-1">${item.name}</h4>
+                                <p class="text-primary font-semibold text-sm">${formatRupiah(item.price)}</p>
+                            </div>
+                            <div class="flex items-center justify-between mt-2">
+                                <div class="flex items-center bg-gray-100 rounded-lg">
+                                    <button onclick="decreaseQuantity(${item.id})" class="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-primary transition">-</button>
+                                    <span class="w-6 text-center text-sm font-semibold">${item.quantity}</span>
+                                    <button onclick="increaseQuantity(${item.id})" class="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-primary transition">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                cartItemsContainer.innerHTML += itemHTML;
+            });
+
+            cartTotal.textContent = formatRupiah(totalPrice);
+            checkoutBtn.disabled = false;
+        };
+
+        // Open/Close Cart Drawer
+        const toggleCart = () => {
+            const drawer = document.getElementById('cart-drawer');
+            const overlay = document.getElementById('cart-overlay');
+            
+            // Check if open
+            if (drawer.classList.contains('translate-x-full')) {
+                // Open
+                drawer.classList.remove('translate-x-full');
+                overlay.classList.remove('hidden');
+                setTimeout(() => overlay.classList.remove('opacity-0'), 10);
+                document.body.style.overflow = 'hidden'; // Prevent background scroll
+            } else {
+                // Close
+                drawer.classList.add('translate-x-full');
+                overlay.classList.add('opacity-0');
+                setTimeout(() => overlay.classList.add('hidden'), 300);
+                document.body.style.overflow = 'auto';
+            }
+        };
+
+        // Custom Toast Notification System
+        const showToast = (message) => {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'bg-gray-900 text-white px-6 py-3 rounded-xl shadow-xl flex items-center gap-3 toast-enter';
+            toast.innerHTML = `
+                <i class="fa-solid fa-circle-check text-green-400"></i>
+                <span class="text-sm font-medium">${message}</span>
+            `;
+            
+            container.appendChild(toast);
+
+            // Remove after 3 seconds
+            setTimeout(() => {
+                toast.classList.remove('toast-enter');
+                toast.classList.add('toast-leave');
+                setTimeout(() => {
+                    toast.remove();
+                }, 300);
+            }, 3000);
+        };
+
+        // Checkout Logic (Simulated)
+        const checkout = () => {
+            if (cart.length === 0) return;
+            
+            // Close cart drawer
+            toggleCart();
+
+            // Show Success Modal
+            const modal = document.getElementById('success-modal');
+            const modalContent = document.getElementById('success-modal-content');
+            
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modalContent.classList.remove('scale-90');
+                modalContent.classList.add('scale-100');
+            }, 10);
+
+            // Clear Cart
+            cart = [];
+            updateCartUI();
+        };
+
+        // Close Success Modal
+        const closeSuccessModal = () => {
+            const modal = document.getElementById('success-modal');
+            const modalContent = document.getElementById('success-modal-content');
+            
+            modal.classList.add('opacity-0');
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-90');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        };
+
+        // Initialization on Load
+        window.onload = () => {
+            renderMenu();
+            updateCartUI(); // Initial state
+            initEyeTracking(); // Mulai tracking mata karakter
+        };
+
+        let currentCustomer = { name: '', table: '' };
+
+        // Eye Tracking & Additional Animations for Cashier Character
+        const initEyeTracking = () => {
+            // Mouse movement pupil tracking
+            document.addEventListener('mousemove', (e) => {
+                const eyes = document.querySelectorAll('.cashier-eye');
+                if (!eyes.length) return; 
+                
+                eyes.forEach(eye => {
+                    const rect = eye.getBoundingClientRect();
+                    const x = rect.left + (rect.width / 2);
+                    const y = rect.top + (rect.height / 2);
+                    
+                    const rad = Math.atan2(e.clientY - y, e.clientX - x);
+                    const maxRadius = 8; 
+                    
+                    const offsetX = Math.cos(rad) * maxRadius;
+                    const offsetY = Math.sin(rad) * maxRadius;
+                    
+                    const pupil = eye.querySelector('.cashier-pupil');
+                    if(pupil) {
+                        pupil.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+                    }
+                });
+            });
+
+            // Automatic Blinking Animation every 3 to 6 seconds
+            setInterval(() => {
+                const eyes = document.querySelectorAll('.cashier-eye');
+                eyes.forEach(eye => {
+                    eye.style.height = '4px'; // Closes eye
+                });
+                setTimeout(() => {
+                    eyes.forEach(eye => {
+                        eye.style.height = '32px'; // Opens eye
+                    });
+                }, 150);
+            }, Math.random() * 3000 + 3000);
+        };
+
+        // Interactive Cashier Reaction (Clicked / Tapped)
+        const triggerCashierReaction = () => {
+            const head = document.getElementById('cashier-head-el');
+            const mouth = document.getElementById('cashier-mouth-el');
+            const speech = document.getElementById('cashier-speech');
+
+            // 1. Happy bounce & head tilt animation
+            head.animate([
+                { transform: 'scale(1) rotate(0deg)' },
+                { transform: 'scale(1.15) rotate(-10deg)' },
+                { transform: 'scale(1.1) rotate(10deg)' },
+                { transform: 'scale(1.05) rotate(-5deg)' },
+                { transform: 'scale(1) rotate(0deg)' }
+            ], { duration: 500, easing: 'ease-in-out' });
+
+            // 2. Open mouth wide into a big smile
+            mouth.style.borderRadius = '0 0 30px 30px';
+            mouth.style.width = '50px';
+            mouth.style.height = '26px';
+            mouth.style.borderColor = 'transparent';
+            mouth.style.backgroundColor = '#d28e5d';
+
+            setTimeout(() => {
+                mouth.style.borderRadius = '50%';
+                mouth.style.width = '44px';
+                mouth.style.height = '22px';
+                mouth.style.borderColor = 'transparent';
+                mouth.style.borderBottomColor = '#d28e5d';
+                mouth.style.backgroundColor = 'transparent';
+            }, 1000);
+
+            // 3. Cycle random playful dialogue in speech bubble
+            const dialogs = [
+                "ðŸ˜‹ Laper ya? Yuk pilih menunya!",
+                "â¤ï¸ Nasi Goreng Spesial kami juara lho!",
+                "âš¡ Pesanan diantar secepat kilat!",
+                "ðŸ”¥ Jangan lupa coba Ayam Gepreknya ya!",
+                "âœ¨ Senang melayani Kakak hari ini!"
+            ];
+            const randomMsg = dialogs[Math.floor(Math.random() * dialogs.length)];
+            speech.innerHTML = `${randomMsg}<div class="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-2.5 h-2.5 bg-orange-500 rotate-45"></div>`;
+
+            // 4. Create floating particle burst effect (Hearts/Stars)
+            createParticleBurst(event);
+            showToast("Koki merespon senyumanmu! ðŸ˜„");
+        };
+
+        // Particle Burst Generator helper
+        const createParticleBurst = (e) => {
+            const container = document.getElementById('welcome-screen');
+            if (!container) return;
+
+            const symbols = ['â¤ï¸', 'â­', 'âœ¨', 'ðŸ˜‹', 'ðŸ”¥'];
+            const count = 6;
+
+            for (let i = 0; i < count; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle text-lg';
+                particle.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+
+                // Center around container origin
+                const startX = window.innerWidth / 2;
+                const startY = window.innerHeight / 2 - 50;
+
+                particle.style.left = `${startX}px`;
+                particle.style.top = `${startY}px`;
+
+                // Random target offset angles
+                const angle = Math.random() * Math.PI * 2;
+                const distance = Math.random() * 80 + 40;
+                const tx = Math.cos(angle) * distance;
+                const ty = Math.sin(angle) * distance - 30;
+
+                particle.style.setProperty('--tx', `${tx}px`);
+                particle.style.setProperty('--ty', `${ty}px`);
+
+                container.appendChild(particle);
+
+                setTimeout(() => {
+                    particle.remove();
+                }, 800);
+            }
+        };
+
+        // Auto-detect table logic (Simulasi)
+        const autoDetectTable = () => {
+            const tableInput = document.getElementById('table-input');
+            const icon = document.getElementById('detect-icon');
+            
+            // Animasi loading mutar
+            icon.classList.add('fa-spin');
+            
+            // Simulasi proses scanning (800ms)
+            setTimeout(() => {
+                icon.classList.remove('fa-spin', 'fa-location-crosshairs');
+                icon.classList.add('fa-check', 'text-green-500');
+                
+                // Set meja acak (karena simulasi)
+                tableInput.value = Math.floor(Math.random() * 20) + 1;
+                
+                showToast("Meja berhasil dideteksi otomatis! âœ…");
+                
+                // Kembalikan ikon ke asal
+                setTimeout(() => {
+                    icon.classList.remove('fa-check', 'text-green-500');
+                    icon.classList.add('fa-location-crosshairs');
+                }, 3000);
+            }, 800);
+        };
+
+        // Start Ordering Logic
+        const startOrdering = () => {
+            const name = document.getElementById('name-input').value.trim();
+            const table = document.getElementById('table-input').value.trim();
+            
+            if (!name || !table) {
+                showToast("Mohon isi Nama dan Nomor Meja ya Kak! ðŸ™");
+                // Efek getar kalau kosong
+                const modal = document.querySelector('#welcome-screen > div');
+                modal.animate([
+                    { transform: 'translateX(-5px)' },
+                    { transform: 'translateX(5px)' },
+                    { transform: 'translateX(-5px)' },
+                    { transform: 'translateX(5px)' },
+                    { transform: 'translateX(0)' }
+                ], { duration: 400, easing: 'ease-in-out' });
+                return;
+            }
+            
+            // Simpan data customer
+            currentCustomer = { name, table };
+            
+            // Sembunyikan layar awal dengan animasi naik ke atas
+            const welcomeScreen = document.getElementById('welcome-screen');
+            welcomeScreen.classList.add('welcome-hidden');
+            
+            // Izinkan web di-scroll kembali
+            const body = document.getElementById('body-main');
+            body.classList.remove('overflow-hidden');
+            body.classList.add('overflow-x-hidden');
+            
+            // Perbarui sapaan di Hero banner
+            document.getElementById('hero-title').innerHTML = 
+                `Halo <span class="text-primary">${name}</span>,<br>Pesan Makananmu Tanpa <span class="text-primary">Ribet!</span>`;
+            
+            // Tampilkan notifikasi toast selamat datang
+            setTimeout(() => {
+                showToast(`Selamat datang Kak ${name} di Meja ${table}! ðŸ½ï¸`);
+            }, 800);
+        };
+
+        // ==========================================
+        // --- Gemini AI Chatbot Logic ---
+        // ==========================================
+        let chatHistory = [];
+        let isChatProcessing = false;
+
+        const toggleChat = () => {
+            const chatWidget = document.getElementById('chat-widget');
+            if (chatWidget.classList.contains('chat-closed')) {
+                chatWidget.classList.remove('chat-closed');
+                chatWidget.classList.add('chat-open');
+                setTimeout(() => document.getElementById('chat-input').focus(), 300);
+            } else {
+                chatWidget.classList.add('chat-closed');
+                chatWidget.classList.remove('chat-open');
+            }
+        };
+
+        const handleChatKeyPress = (event) => {
+            if (event.key === 'Enter') {
+                sendChatMessage();
+            }
+        };
+
+        const appendMessage = (text, sender) => {
+            const messagesContainer = document.getElementById('chat-messages');
+            const msgDiv = document.createElement('div');
+            
+            // Format basic bold markdown (**) to HTML
+            const formattedText = text
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\n/g, '<br>');
+
+            if (sender === 'user') {
+                msgDiv.className = 'flex items-end justify-end gap-2 max-w-[85%] self-end transform transition-all translate-y-2 opacity-0';
+                msgDiv.innerHTML = `
+                    <div class="bg-gradient-to-r from-primary to-secondary text-white p-3 rounded-2xl rounded-tr-none shadow-md leading-relaxed">
+                        ${formattedText}
+                    </div>
+                `;
+            } else {
+                msgDiv.className = 'flex items-start gap-2 max-w-[90%] transform transition-all translate-y-2 opacity-0';
+                msgDiv.innerHTML = `
+                    <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-orange-100 to-orange-200 text-primary flex items-center justify-center flex-shrink-0 shadow-sm border border-orange-50 mt-1">
+                        <i class="fa-solid fa-robot text-xs"></i>
+                    </div>
+                    <div class="bg-white p-3 rounded-2xl rounded-tl-none shadow-sm text-gray-700 leading-relaxed border border-gray-100">
+                        ${formattedText}
+                    </div>
+                `;
+            }
+            
+            messagesContainer.appendChild(msgDiv);
+            
+            // Trigger animation
+            requestAnimationFrame(() => {
+                msgDiv.classList.remove('translate-y-2', 'opacity-0');
+            });
+
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        };
+
+        const showTypingIndicator = () => {
+            const messagesContainer = document.getElementById('chat-messages');
+            const msgDiv = document.createElement('div');
+            msgDiv.id = 'typing-indicator';
+            msgDiv.className = 'flex items-start gap-2 max-w-[85%] transform transition-all';
+            msgDiv.innerHTML = `
+                <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-orange-100 to-orange-200 text-primary flex items-center justify-center flex-shrink-0 shadow-sm border border-orange-50">
+                    <i class="fa-solid fa-robot text-xs"></i>
+                </div>
+                <div class="bg-white p-4 rounded-2xl rounded-tl-none shadow-sm flex gap-1.5 items-center h-[42px] border border-gray-100">
+                    <div class="w-2 h-2 bg-primary/60 rounded-full typing-dot"></div>
+                    <div class="w-2 h-2 bg-primary/60 rounded-full typing-dot"></div>
+                    <div class="w-2 h-2 bg-primary/60 rounded-full typing-dot"></div>
+                </div>
+            `;
+            messagesContainer.appendChild(msgDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        };
+
+        const removeTypingIndicator = () => {
+            const indicator = document.getElementById('typing-indicator');
+            if (indicator) indicator.remove();
+        };
+
+        const sendChatMessage = async () => {
+            if (isChatProcessing) return;
+            
+            const inputField = document.getElementById('chat-input');
+            const sendBtn = document.getElementById('chat-send-btn');
+            const userText = inputField.value.trim();
+            
+            if (!userText) return;
+
+            // 1. Show user message
+            appendMessage(userText, 'user');
+            inputField.value = '';
+            
+            // 2. Add to history
+            chatHistory.push({ role: "user", parts: [{ text: userText }] });
+            
+            // 3. Update UI state to loading
+            isChatProcessing = true;
+            inputField.disabled = true;
+            sendBtn.disabled = true;
+            showTypingIndicator();
+
+            try {
+                // Prepare System Prompt with Context dynamically reading from menuData
+                const menuContext = menuData.map(m => `- ${m.name} (Kategori: ${m.category}): Rp ${m.price}. Deskripsi: ${m.description}`).join('\n');
+                
+                const customerContext = currentCustomer.name ? 
+                    `Kamu sedang berbicara dengan pelanggan bernama Kak ${currentCustomer.name} yang duduk di Meja ${currentCustomer.table}. Selalu sapa pelanggan dengan namanya pada setiap responmu untuk memberikan kesan personal.` : '';
+
+                const systemPrompt = `Kamu adalah Asisten AI Virtual yang interaktif dan ramah untuk platform pesan-antar makanan 'MakanKuy'. 
+Tugas utamamu adalah membantu pelanggan memilih makanan, memberikan rekomendasi spesifik, dan menjawab pertanyaan terkait menu kami.
+
+${customerContext}
+
+Gunakan bahasa Indonesia yang santai, sopan, sedikit gaul namun profesional (seperti menggunakan kata 'Kak', 'Yuk', 'Boleh banget'). Gunakan emoji sesekali agar terlihat bersahabat.
+
+Berikut adalah daftar menu aktual dari MakanKuy saat ini:
+${menuContext}
+
+ATURAN PENTING: 
+1. Jangan PERNAH merekomendasikan, membenarkan, atau menyebutkan makanan/minuman yang TIDAK ADA di dalam daftar menu di atas.
+2. Jika pelanggan mencari sesuatu yang tidak ada (misal: "Ada pizza?"), mohon maaf dengan ramah dan rekomendasikan menu lain yang mirip atau menu andalan kami dari daftar di atas.
+3. Berikan jawaban yang ringkas, jelas, dan tidak bertele-tele. Jangan gunakan markdown yang rumit, cukup gunakan bold (**) untuk menekankan nama menu atau harga.
+4. Kamu tidak bisa menambahkan item ke keranjang pelanggan secara langsung, arahkan mereka untuk mengklik tombol '+' pada kartu menu.`;
+
+                const payload = {
+                    contents: chatHistory,
+                    systemInstruction: {
+                        parts: [{ text: systemPrompt }]
+                    },
+                };
+
+                const apiKey = ""; // API Key provided by the collaborative environment runtime
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API Error: ${response.status}`);
+                }
+
+                const result = await response.json();
+                const aiText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                if (aiText) {
+                    removeTypingIndicator();
+                    appendMessage(aiText, 'model');
+                    chatHistory.push({ role: "model", parts: [{ text: aiText }] });
+                } else {
+                    throw new Error("Invalid response format from Gemini");
+                }
+
+            } catch (error) {
+                console.error("Gemini API Error:", error);
+                removeTypingIndicator();
+                appendMessage("Aduh, maaf Kak! Sistem saya lagi agak sibuk nih. Boleh coba ketik lagi pertanyaannya? ðŸ™", 'model');
+                // Remove the last user turn from history to prevent breaking the chat flow sequence
+                chatHistory.pop();
+            } finally {
+                // Restore UI state
+                isChatProcessing = false;
+                inputField.disabled = false;
+                sendBtn.disabled = false;
+                inputField.focus();
+            }
+        };
+
+        // Optional: Add styling to navbar on scroll
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 20) {
+                navbar.classList.add('shadow-md');
+                navbar.classList.remove('shadow-sm');
+            } else {
+                navbar.classList.remove('shadow-md');
+                navbar.classList.add('shadow-sm');
+            }
+        });
+    </script>
+</body>
+</html>

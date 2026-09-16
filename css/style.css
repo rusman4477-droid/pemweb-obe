@@ -1,0 +1,231 @@
+/* ===========================================================
+   KafeQR — style.css
+   Styling untuk halaman awal (welcome screen)
+   Catatan: HTML tidak memakai class, jadi selector di bawah
+   sengaja memakai elemen & id supaya cocok dengan strukturnya.
+   =========================================================== */
+
+/* -----------------------------------------------------------
+   1. Reset dasar & variabel warna/tipografi
+   ----------------------------------------------------------- */
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  --color-bg: #1c2b24;      /* latar halaman, gelap seperti papan tulis kafe */
+  --color-card: #24352c;    /* latar kartu ucapan selamat datang */
+  --color-cream: #f3ead8;   /* warna teks utama */
+  --color-cream-dim: #c9c0ac; /* teks sekunder / hint */
+  --color-gold: #e3a73a;    /* aksen tombol & fokus */
+  --color-coral: #e2694f;   /* aksen kedua, dipakai sedikit saja */
+  --color-line: rgba(243, 234, 216, 0.16); /* garis pembatas tipis */
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background-color: var(--color-bg);
+  color: var(--color-cream);
+  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Fokus keyboard harus selalu terlihat jelas (penting untuk aksesibilitas) */
+a:focus-visible,
+input:focus-visible,
+button:focus-visible {
+  outline: 3px solid var(--color-gold);
+  outline-offset: 3px;
+}
+
+/* -----------------------------------------------------------
+   2. Skip link
+   Disembunyikan secara visual, tapi tetap terbaca dan bisa
+   difokus lewat keyboard (Tab pertama saat halaman dibuka).
+   ----------------------------------------------------------- */
+body > a:first-child {
+  position: absolute;
+  left: 1rem;
+  top: -3rem;
+  background: var(--color-gold);
+  color: #1c2b24;
+  padding: 0.6rem 1rem;
+  border-radius: 0.4rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: top 0.2s ease;
+  z-index: 10;
+}
+
+body > a:first-child:focus {
+  top: 1rem;
+}
+
+/* -----------------------------------------------------------
+   3. Header
+   ----------------------------------------------------------- */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  flex-wrap: wrap;
+}
+
+header p:first-child {
+  margin: 0;
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 1.35rem;
+  letter-spacing: 0.02em;
+}
+
+header p:last-child {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--color-cream-dim);
+}
+
+/* -----------------------------------------------------------
+   4. Main & kartu sambutan
+   ----------------------------------------------------------- */
+main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem 1.25rem 3rem;
+}
+
+main section {
+  width: 100%;
+  max-width: 26rem;
+  background-color: var(--color-card);
+  border-radius: 1.25rem;
+  padding: 2.25rem 1.9rem 2.5rem;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.35);
+}
+
+main section img {
+  display: block;
+  margin: 0 auto 1.25rem;
+  width: 96px;
+  height: 96px;
+}
+
+main section h1 {
+  font-family: "Fraunces", Georgia, serif;
+  font-style: italic;
+  font-weight: 500;
+  font-size: 1.9rem;
+  line-height: 1.2;
+  text-align: center;
+  margin: 0 0 0.6rem;
+}
+
+main section > p {
+  text-align: center;
+  margin: 0 auto 1.75rem;
+  max-width: 30ch;
+  color: var(--color-cream-dim);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+main section hr {
+  border: none;
+  border-top: 2px dashed var(--color-line);
+  margin: 0 0 1.75rem;
+}
+
+/* -----------------------------------------------------------
+   5. Form
+   ----------------------------------------------------------- */
+form div {
+  margin-bottom: 1.4rem;
+}
+
+form label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+}
+
+form span {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--color-cream-dim);
+  margin-top: 0.35rem;
+}
+
+form input {
+  width: 100%;
+  padding: 0.7rem 0.85rem;
+  border-radius: 0.6rem;
+  border: 1px solid var(--color-line);
+  background-color: rgba(243, 234, 216, 0.06);
+  color: var(--color-cream);
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+form input::placeholder {
+  color: rgba(243, 234, 216, 0.4);
+}
+
+form button {
+  display: block;
+  width: 100%;
+  margin-top: 0.5rem;
+  padding: 0.95rem 1rem;
+  border-radius: 999px;
+  border: 2px dashed rgba(28, 43, 36, 0.35);
+  background-color: var(--color-gold);
+  color: #23180a;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+form button:hover {
+  background-color: #edb956;
+}
+
+/* -----------------------------------------------------------
+   6. Footer
+   ----------------------------------------------------------- */
+footer {
+  text-align: center;
+  padding: 1.5rem 1rem 2rem;
+  font-size: 0.78rem;
+  color: var(--color-cream-dim);
+}
+
+/* -----------------------------------------------------------
+   7. Aksesibilitas gerakan
+   Menghormati preferensi pengguna yang sensitif terhadap animasi.
+   ----------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  body > a:first-child,
+  form button {
+    transition: none;
+  }
+}
+
+/* -----------------------------------------------------------
+   8. Responsif untuk layar kecil
+   ----------------------------------------------------------- */
+@media (max-width: 360px) {
+  main section {
+    padding: 1.75rem 1.25rem 2rem;
+  }
+
+  main section h1 {
+    font-size: 1.6rem;
+  }
+}
